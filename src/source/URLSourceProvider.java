@@ -3,6 +3,7 @@ package source;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
@@ -11,14 +12,31 @@ import java.net.URL;
  */
 public class URLSourceProvider implements SourceProvider {
 
+    public static final String GET_METHOD = "GET";
+    public static final String FTP_PROTOCOL = "ftp";
+    public static final int CODE_OK = 200;
+
     @Override
     public boolean isAllowed(String pathToSource) {
         try {
             URL url = new URL(pathToSource);
-        } catch (IOException e) {
+            if (FTP_PROTOCOL.equalsIgnoreCase(url.getProtocol())) {
+                return true;
+            }
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(GET_METHOD);
+            connection.connect();
+            if (CODE_OK == connection.getResponseCode()) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
             return false;
         }
-        return true;
+
     }
 
     @Override
