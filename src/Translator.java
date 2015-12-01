@@ -92,7 +92,7 @@ public class Translator {
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node data = childNodes.item(i);
             if (data.getNodeType() == Node.TEXT_NODE) {
-                return data.getNodeValue();
+                return data.getTextContent();
             }
         }
         return "";

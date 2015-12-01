@@ -1,6 +1,12 @@
 package source;
 
-import java.io.*;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation for loading content from local file system.
@@ -9,10 +15,12 @@ import java.io.*;
  */
 public class FileSourceProvider implements SourceProvider {
 
+    public static final String WHITE_SPACE = " ";
+
     @Override
     public boolean isAllowed(String pathToSource) {
-        File file = new File(pathToSource);
-        if (file.exists() && file.canRead()) {
+        Path path = Paths.get(pathToSource);
+        if (Files.exists(path) && Files.isReadable(path)) {
             return true;
         }
         return false;
@@ -20,14 +28,9 @@ public class FileSourceProvider implements SourceProvider {
 
     @Override
     public String load(String pathToSource) throws IOException {
-        BufferedReader bf = new BufferedReader(new FileReader(pathToSource));
-        StringBuilder loadedText = new StringBuilder();
-        String readLine = "";
-        while ((readLine = bf.readLine()) != null){
-            loadedText.append(readLine);
-        }
-        bf.close();
+        List<String> readLines = Files.readAllLines(Paths.get(pathToSource), Charset.defaultCharset());
 
-        return loadedText.toString();
+        return readLines.stream()
+                        .collect(Collectors.joining(WHITE_SPACE));
     }
 }
