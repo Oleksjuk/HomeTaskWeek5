@@ -1,5 +1,6 @@
 package source;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -19,11 +20,15 @@ public class FileSourceProvider implements SourceProvider {
 
     @Override
     public boolean isAllowed(String pathToSource) {
-        Path path = Paths.get(pathToSource);
-        if (Files.exists(path) && Files.isReadable(path)) {
-            return true;
+        try {
+            Path path = Paths.get(pathToSource);
+            if (Files.exists(path) && Files.isReadable(path)) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 
     @Override
